@@ -1,0 +1,158 @@
+/*
+ * default.css_t
+ * ~~~~~~~~~~~~~
+ *
+ * Sphinx stylesheet -- default theme.
+ *
+ * :copyright: Copyright 2007-2014 by the Sphinx team, see AUTHORS.
+ * :license: BSD, see LICENSE for details.
+ * Modified 2017 by BGS, NERC for OneGeology site
+ *
+ */
+
+@import url("basic.css");
+
+/* -- page layout ----------------------------------------------------------- */
+
+div.left.figure {
+	margin-right: 48%;
+	padding: 1%;
+}
+div.right.figure {
+	width: 46%;
+	float: right;
+}
+
+div.floatright {
+    float: right;
+}
+
+/* -- relbar styles --------------------------------------------------------- */
+/* Needed to override onegeology general site use of .right class as a column thing */
+div.related li.right {
+    width: auto;
+}
+
+div.related.technical_progress {
+    width: 98%;
+    font-size: 0.8em;
+}
+
+/* -- hyperlink styles ------------------------------------------------------ */
+
+
+/* -- body styles ----------------------------------------------------------- */
+
+a.headerlink:hover {
+    background-color: #c60f0f;
+    color: white;
+}
+
+div.admonition p.admonition-title + p {
+    display: inline;
+}
+
+div.admonition p {
+    margin-bottom: 5px;
+}
+
+div.admonition pre {
+    margin-bottom: 5px;
+}
+
+div.admonition ul, div.admonition ol {
+    margin-bottom: 5px;
+}
+
+div.admonition-todo {
+    background-color: #ffa;
+}
+
+div.note {
+    background-color: #eee;
+    border: 1px solid #ccc;
+}
+
+div.seealso {
+    background-color: #ffc;
+    border: 1px solid #ff6;
+}
+
+div.topic {
+    background-color: #eee;
+}
+
+div.warning {
+    background-color: #ffe4e4;
+    border: 1px solid #f66;
+}
+
+p.admonition-title {
+    display: inline;
+}
+
+p.admonition-title:after {
+    content: ":";
+}
+
+pre {
+    padding: 5px;
+    background-color: #eeffcc;
+    color: #333333;
+    line-height: 120%;
+    border: 1px solid #ac9;
+    border-left: none;
+    border-right: none;
+}
+
+code {
+    background-color: #ecf0f3;
+    padding: 0 1px 0 1px;
+    font-size: 0.95em;
+}
+
+th {
+    background-color: #ede;
+}
+
+td.INSPIRE {
+	background-color: #325595;
+	color: white;
+}
+td.CGI {
+	background-color: #97771A;
+	color: white;
+}
+
+td.rqd {
+    background:#bbb;
+    font-weight:bold;
+}
+
+td.nbtype {
+    font-style:oblique;
+    background:#eee;
+}
+
+.warning code {
+    background: #efc2c2;
+}
+
+.note code {
+    background: #d6d6d6;
+}
+
+.viewcode-back {
+    font-family: sans-serif;
+}
+
+div.viewcode-block:target {
+    background-color: #f4debf;
+    border-top: 1px solid #ac9;
+    border-bottom: 1px solid #ac9;
+}
+
+div.code-block-caption {
+    color: #efefef;
+    background-color: #1c4e63;
+}

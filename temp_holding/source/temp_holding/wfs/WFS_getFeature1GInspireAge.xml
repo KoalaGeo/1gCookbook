@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:GetFeature xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd
+  http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd"
+ xmlns:gsmlb="http://www.opengis.net/gsml/4.1/GeoSciML-Basic"
+ xmlns:fes="http://www.opengis.net/fes/2.0"
+ xmlns:wfs="http://www.opengis.net/wfs/2.0"
+ xmlns:xlink="http://www.w3.org/1999/xlink" count="10" service="WFS"
+ version="2.0.0" outputFormat="application/gml+xml; version=3.2">
+ <wfs:Query typeNames="gsmlb:MappedFeature">
+  <fes:Filter>
+   <fes:Or>
+    <fes:PropertyIsEqualTo>
+     <fes:ValueReference>gsmlb:specification/gsmlb:GeologicUnit/gsmlb:geologicHistory/gsmlb:GeologicEvent/gsmlb:youngerNamedAge/@xlink:href</fes:ValueReference>
+     <fes:Literal>http://inspire.ec.europa.eu/codelist/GeochronologicEraValue/lowerDevonian</fes:Literal>
+    </fes:PropertyIsEqualTo>
+    <fes:PropertyIsEqualTo>
+     <fes:ValueReference>gsmlb:specification/gsmlb:GeologicUnit/gsmlb:geologicHistory/gsmlb:GeologicEvent/gsmlb:youngerNamedAge/@xlink:href</fes:ValueReference>
+     <fes:Literal>http://inspire.ec.europa.eu/codelist/GeochronologicEraValue/emsian</fes:Literal>
+    </fes:PropertyIsEqualTo>
+    <fes:PropertyIsEqualTo>
+     <fes:ValueReference>gsmlb:specification/gsmlb:GeologicUnit/gsmlb:geologicHistory/gsmlb:GeologicEvent/gsmlb:youngerNamedAge/@xlink:href</fes:ValueReference>
+     <fes:Literal>http://inspire.ec.europa.eu/codelist/GeochronologicEraValue/lochkovian</fes:Literal>
+    </fes:PropertyIsEqualTo>
+    <fes:PropertyIsEqualTo>
+     <fes:ValueReference>gsmlb:specification/gsmlb:GeologicUnit/gsmlb:geologicHistory/gsmlb:GeologicEvent/gsmlb:youngerNamedAge/@xlink:href</fes:ValueReference>
+     <fes:Literal>http://inspire.ec.europa.eu/codelist/GeochronologicEraValue/pragian</fes:Literal>
+    </fes:PropertyIsEqualTo>
+   </fes:Or>
+  </fes:Filter>
+ </wfs:Query>
+</wfs:GetFeature>

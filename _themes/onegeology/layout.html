@@ -1,0 +1,370 @@
+{#
+    basic/layout.html
+    ~~~~~~~~~~~~~~~~~
+
+    Master layout template for Sphinx themes.
+
+    :copyright: Copyright 2007-2017 by the Sphinx team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
+#}
+{%- block doctype -%}{%- if html5_doctype %}
+<!DOCTYPE html>
+{%- else %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{%- endif %}{%- endblock %}
+{%- set reldelim1 = reldelim1 is not defined and ' &gt;' or reldelim1 %}
+{%- set reldelim2 = reldelim2 is not defined and ' |' or reldelim2 %}
+{%- set render_sidebar = (not embedded) and (not theme_nosidebar|tobool) and
+                         (sidebars != []) %}
+{%- set url_root = pathto('', 1) %}
+{# XXX necessary? #}
+{%- if url_root == '#' %}{% set url_root = '' %}{% endif %}
+{%- if not embedded and docstitle %}
+  {%- set titlesuffix = " &#8212; "|safe + docstitle|e %}
+{%- else %}
+  {%- set titlesuffix = "" %}
+{%- endif %}
+
+{%- macro relbar() %}
+    <div class="related technical_progress" role="navigation" aria-label="related navigation">
+      <h3>{{ _('Navigation') }}</h3>
+      <ul>
+        {%- for rellink in rellinks %}
+        <li class="right" {% if loop.first %}style="margin-right: 10px"{% endif %}>
+          <a href="{{ pathto(rellink[0]) }}" title="{{ rellink[1]|striptags|e }}"
+             {{ accesskey(rellink[2]) }}>{{ rellink[3] }}</a>
+          {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
+        {%- endfor %}
+        {%- block rootrellink %}
+        {%- if theme_finaldeploy %}
+        <li class="nav-item nav-item-0"><a href="/home.html">Home</a>{{ reldelim1 }}</li>
+        {%- else %}
+        <li class="nav-item nav-item-0"><a href="{{ theme_sharedroot }}/home.html">Home</a>{{ reldelim1 }}</li>
+        {%- endif %}
+        {%- if master_doc != pagename %}
+        <li class="nav-item nav-item-0"><a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a>{{ reldelim1 }}</li>
+        {%- endif %}
+        {%- endblock %}
+        {%- for parent in parents %}
+          <li class="nav-item nav-item-{{ loop.index }}"><a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{% endif %}>{{ parent.title }}</a>{{ reldelim1 }}</li>
+        {%- endfor %}
+        {%- block relbaritems %}
+        {%- if master_doc != pagename %}
+          <li class="nav-item">{{ title|e }}</li>
+        {%- else %}
+          <li class="nav-item">{{ shorttitle|e }}</li>
+        {%- endif %}
+        {% endblock %}
+      </ul>
+    </div>
+{%- endmacro %}
+
+{%- macro sidebar() %}
+      {%- if render_sidebar %}
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+          {%- block sidebarlogo %}
+          {%- if logo %}
+            <p class="logo"><a href="{{ pathto(master_doc) }}">
+              <img class="logo" src="{{ pathto('_static/' + logo, 1) }}" alt="Logo"/>
+            </a></p>
+          {%- endif %}
+          {%- endblock %}
+          {%- if sidebars != None %}
+            {#- new style sidebar: explicitly include/exclude templates #}
+            {%- for sidebartemplate in sidebars %}
+            {%- include sidebartemplate %}
+            {%- endfor %}
+          {%- else %}
+            {#- old style sidebars: using blocks -- should be deprecated #}
+            {%- block sidebartoc %}
+            {%- include "localtoc.html" %}
+            {%- endblock %}
+            {%- block sidebarrel %}
+            {%- include "relations.html" %}
+            {%- endblock %}
+            {%- block sidebarsourcelink %}
+            {%- include "sourcelink.html" %}
+            {%- endblock %}
+            {%- if customsidebar %}
+            {%- include customsidebar %}
+            {%- endif %}
+            {%- block sidebarsearch %}
+            {%- include "searchbox.html" %}
+            {%- endblock %}
+          {%- endif %}
+        </div>
+      </div>
+      {%- endif %}
+{%- endmacro %}
+
+{%- macro script() %}
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '{{ url_root }}',
+        VERSION:     '{{ release|e }}',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '{{ '' if no_search_suffix else file_suffix }}',
+        HAS_SOURCE:  {{ has_source|lower }},
+        SOURCELINK_SUFFIX: '{{ sourcelink_suffix }}'
+      };
+    </script>
+    {%- for scriptfile in script_files %}
+    <script type="text/javascript" src="{{ pathto(scriptfile, 1) }}"></script>
+    {%- endfor %}
+{%- endmacro %}
+
+{%- macro css() %}
+    <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" />
+    <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" />
+    {%- for css in css_files %}
+    <link rel="{{ css.rel }}" href="{{ pathto(css.filename, 1) }}" type="text/css"{% if css.title is not none %} title="{{ css.title }}"{% endif %} />
+    {%- endfor %}
+{%- endmacro %}
+
+{%- if html_tag %}
+{{ html_tag }}
+{%- else %}
+<html xmlns="http://www.w3.org/1999/xhtml"{% if language is not none %} lang="{{ language }}"{% endif %}>
+{%- endif %}
+  <head>
+    {{ metatags }}
+    {%- block htmltitle %}
+    <title>{{ title|striptags|e }}{{ titlesuffix }}</title>
+    {%- endblock %}
+    {%- if theme_finaldeploy %}
+<!--#include file="/headIncludes.htm"-->
+    {%- else %}
+<!--[if lt IE 9]>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/livingston-css3-mediaqueries-js/1.0.0/css3-mediaqueries.min.js"></script>
+<link href="/css/IEfix.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="HandheldFriendly" content="true" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="{{ theme_sharedroot }}/onegeology.css" rel="stylesheet" type="text/css" />
+<link href="{{ theme_sharedroot }}/onegeology_screen_reader.css" rel="stylesheet" type="text/css" media="aural" />
+<link href="{{ theme_sharedroot }}/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="{{ theme_sharedroot }}/favicon.ico" />
+<link href="{{ theme_sharedroot }}/js/jquery.lightbox-0.5.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="{{ theme_sharedroot }}/js/jquery-latest.min.js"></script>
+<script type="text/javascript" src="{{ theme_sharedroot }}/js/jquery.lightbox-0.5.pack.js"></script>
+<script type="text/javascript" src="{{ theme_sharedroot }}/js/lightboxInit.js"></script>
+<script type="text/javascript" src="{{ theme_sharedroot }}/functions.js"></script>
+    {%- endif %}
+    {%- block csss %}
+    {{ css() }}
+    {%- endblock %}
+    {%- if not embedded %}
+    {%- block scripts %}
+    {{ script() }}
+    {%- endblock %}
+    {%- if use_opensearch %}
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="{% trans docstitle=docstitle|e %}Search within {{ docstitle }}{% endtrans %}"
+          href="{{ pathto('_static/opensearch.xml', 1) }}"/>
+    {%- endif %}
+    {%- if favicon %}
+    <link rel="shortcut icon" href="{{ pathto('_static/' + favicon, 1) }}"/>
+    {%- endif %}
+    {%- endif %}
+{%- block linktags %}
+    {%- if hasdoc('about') %}
+    <link rel="author" title="{{ _('About these documents') }}" href="{{ pathto('about') }}" />
+    {%- endif %}
+    {%- if hasdoc('genindex') %}
+    <link rel="index" title="{{ _('Index') }}" href="{{ pathto('genindex') }}" />
+    {%- endif %}
+    {%- if hasdoc('search') %}
+    <link rel="search" title="{{ _('Search') }}" href="{{ pathto('search') }}" />
+    {%- endif %}
+    {%- if hasdoc('copyright') %}
+    <link rel="copyright" title="{{ _('Copyright') }}" href="{{ pathto('copyright') }}" />
+    {%- endif %}
+    {%- if next %}
+    <link rel="next" title="{{ next.title|striptags|e }}" href="{{ next.link|e }}" />
+    {%- endif %}
+    {%- if prev %}
+    <link rel="prev" title="{{ prev.title|striptags|e }}" href="{{ prev.link|e }}" />
+    {%- endif %}
+{%- endblock %}
+{%- block extrahead %}
+{% endblock %}
+  </head>
+  <body>
+   <div id="outer_container">
+{%- block header %}
+    {%- if theme_finaldeploy %}
+  <!--#include file="/top_menu.inc"-->
+    {%- else %}
+<div class="top_banner_box" id="page_top"><header>
+    <span class="top_banner"><em>Providing geoscience data globally</em></span>
+    <a accesskey="1" tabindex="1" href="{{ theme_sharedroot }}/home.html"> <img src="{{ theme_sharedroot }}/images/onegeology_logo.png" alt="OneGeology logo" class="nob" id="oneGeologylogo" /></a>
+    <span class="screen_reader">
+        <a tabindex="2" href="#menu">Navigation</a><br />
+        <a tabindex="3" href="#content">Main content</a><br />
+        <a tabindex="4" href="#bottom_links">Bottom links</a>
+    </span></header>
+</div>
+<div class="print"><h1>OneGeology</h1></div>
+    {%- endif %}
+{% endblock %}
+
+{%- block relbar1 %}{{ relbar() }}{% endblock %}
+
+{%- block homemenu %}
+    {%- if theme_finaldeploy %}
+  <!--#include file="/home_menu.inc"-->
+    {%- else %}
+<div class="clear horizontal_links navigation"> 
+	<span id="mobileMenu"><i class="fa fa-bars fa-2x"></i></span>
+	<div id="menu">
+	<nav><a name="navigation" id="navigation"></a>
+	  <dl>
+		<dt><a href="{{ theme_sharedroot }}/what_is/home.html" id="menu1">About us</a></dt>
+		<dd id="smenu1">
+		  <ul>
+			<li><a href="{{ theme_sharedroot }}/what_is/mission.html">The Mission</a></li>
+			<li><a href="{{ theme_sharedroot }}/what_is/objective.html">Objectives</a></li>
+			<li><a href="{{ theme_sharedroot }}/what_is/how.html">How</a></li>
+			<li><a href="{{ theme_sharedroot }}/what_is/accord.html">The Accord</a></li>
+		  </ul>
+		</dd>
+	  </dl>
+	  <dl>
+		<dt><a href="{{ theme_sharedroot }}/participants/home.html">Members</a></dt>
+		<dd id="smenu2">
+		  <ul>
+			<li><a href="{{ theme_sharedroot }}/participants/members.html">Members and membership type</a></li>
+			<li><a href="{{ theme_sharedroot }}/participants/app/1gCountries.cfc?method=viewCountries">Countries involved</a></li>
+			<li><a href="{{ theme_sharedroot }}/participants/organisational_bodies.html">Organisational bodies</a></li>
+			<li><a href="{{ theme_sharedroot }}/participants/sponsors.html">Sponsors</a></li>
+			<li><a href="{{ theme_sharedroot }}/participants/app/1gCountries.cfc?method=viewCountryMap">Interactive map</a></li>
+		  </ul>
+		</dd>
+	  </dl>
+	  <dl>
+		<dt><a href="{{ theme_sharedroot }}/organisation/home.html">Organisation</a></dt>
+		<dd id="smenu3">
+		  <ul>
+			<li><a href="{{ theme_sharedroot }}/organisation/secretariat.html">Administration</a></li>
+			<li><a href="{{ theme_sharedroot }}/organisation/board.html">Board</a></li>
+			<li><a href="{{ theme_sharedroot }}/organisation/mou.html">Memorandum of understanding</a></li>
+			<li><a href="{{ theme_sharedroot }}/organisation/tag.html">Technical advisory group</a></li>
+			<li><a href="{{ theme_sharedroot }}/organisation/tig.html">Technical implementation group</a></li>
+		  </ul>
+		</dd>
+	  </dl>
+	  <dl>
+		<dt><a href="{{ theme_sharedroot }}/getting_involved/home.html">Getting involved</a></dt>
+	  </dl>
+	  <dl>
+		<dt><a href="{{ theme_sharedroot }}/technical_progress/technical.html">Technical</a></dt>
+		<dd id="smenu9">
+		  <ul>
+			<li><a href="{{ theme_sharedroot }}/technical_progress/geosciml.html">GeoSciML</a></li>
+			<li><a href="{{ theme_sharedroot }}/portal/portal_uses.html">Potential portal uses</a></li>
+			<li><a href="{{ theme_sharedroot }}/technical_progress/esriGrantOffer.html">ESRI Grant Offer</a></li>
+			<li><a href="{{ theme_sharedroot }}/technical_progress/buddy_home.html">Register your data for the Portal</a></li>
+			<li><a href="{{ theme_sharedroot }}/service_provision/home.html">Providing services</a></li>
+			<li><a href="{{ theme_sharedroot }}/wmsCookbook/1.html">Register your WMS</a></li>
+			<li><a href="{{ theme_sharedroot }}/technical_progress/accreditationForm.cfm">Web Services Accreditation Scheme</a></li>
+			<li><a href="{{ theme_sharedroot }}/use/home.html">How to use a OneGeology service</a></li>
+		  </ul>
+		</dd>
+	  </dl>
+	  <dl>
+		<dt><a href="{{ theme_sharedroot }}/meetings/home.html">Meetings</a></dt>
+		<dd id="smenu6">
+		  <ul>
+			<li><a href="{{ theme_sharedroot }}/meetings/steering_meetings.html">Board</a></li>
+			<li><a href="{{ theme_sharedroot }}/meetings/operational_meetings.html">Technical advisory group</a></li>
+			<li><a href="{{ theme_sharedroot }}/meetings/technical_meetings.html">Technical implementation group</a></li>
+		  </ul>
+		</dd>
+	  </dl>
+	  <dl>
+		<dt><a href="{{ theme_sharedroot }}/portal/home.html">Portal</a></dt>
+	  </dl>
+	  <dl>
+		<dt><a href="{{ theme_sharedroot }}/eXtra/home.html">eXtra</a></dt>
+		<dd id="smenu8">
+		  <ul>
+			<li><a href="{{ theme_sharedroot }}/eXtra/culture/home.html">Culture</a></li>
+			<li><a href="{{ theme_sharedroot }}/eXtra/Geodiversity/home.html">Geodiversity</a></li>
+			<li><a href="{{ theme_sharedroot }}/eXtra/kids/home.html">OneGeology Kids</a></li>
+			<li><a href="{{ theme_sharedroot }}/eXtra/Showcase/home.html">Showcase</a></li>
+		  </ul>
+		</dd>
+	  </dl>
+	  </nav>
+	</div> 
+</div>
+    {%- endif %}
+{% endblock %}
+
+{%- block content %}
+  {%- block sidebar1 %} {# possible location for sidebar #} {% endblock %}
+
+    <div class="document">
+  {%- block document %}
+      <div class="documentwrapper">
+      {%- if render_sidebar %}
+        <div class="bodywrapper">
+      {%- endif %}
+         <div id="content">
+         <div class="fullwidth">
+          <div class="body" role="main">
+            {% block body %} {% endblock %}
+          </div>
+         </div>
+         </div>
+      {%- if render_sidebar %}
+        </div>
+      {%- endif %}
+      </div>
+  {%- endblock %}
+
+  {%- block sidebar2 %}{{ sidebar() }}{% endblock %}
+      <div class="clearer"></div>
+    </div>
+{%- endblock %}
+
+{%- block relbar2 %}{{ relbar() }}{% endblock %}
+
+{%- block footer %}
+    {%- if theme_finaldeploy %}
+  <!--#include file="/bottom_menu.inc"-->
+    {%- else %}
+<footer><div class="horizontal_links">
+        <div><a href="{{ theme_sharedroot }}/misc/contact_us.html" class="menus">Contact us</a></div>
+        <div><a href="{{ theme_sharedroot }}/misc/news.html" class="menus">Newsletters</a></div>
+        <div><a href="{{ theme_sharedroot }}/misc/downloads.html" class="menus">Downloads</a></div>
+        <div><a href="{{ theme_sharedroot }}/misc/privacy.html" class="menus">Privacy</a></div>
+		<div><a href="{{ theme_sharedroot }}/participants/app/1gCountries.cfc?method=viewCountryMap" class="menus">Participating countries map</a></div>
+		<div id="pageTopBtn"><a href="#page_top" class="menus">Top</a></div>
+</div>
+<p class="disclaimer">OneGeology &copy; 2017. This site is hosted by the <a target="_blank" href="http://www.bgs.ac.uk/hosted.html">British Geological Survey</a> but responsibility for the content of the site lies with OneGeology not with the British Geological Survey. Questions, suggestions, or comments regarding the contents of this site should be directed to  <a href="mailto:onegeology@bgs.ac.uk">the OneGeology administration</a>.</p></footer>
+    {%- endif %}
+{# Below is the Sphinx original footer which probably can be deleted. #}
+    <div class="footer" role="contentinfo">
+    {%- if show_copyright %}
+      {%- if hasdoc('copyright') %}
+        {% trans path=pathto('copyright'), copyright=copyright|e %}&#169; <a href="{{ path }}">Copyright</a> {{ copyright }}.{% endtrans %}
+      {%- else %}
+        {% trans copyright=copyright|e %}&#169; Copyright {{ copyright }}.{% endtrans %}
+      {%- endif %}
+    {%- endif %}
+    {%- if last_updated %}
+      {% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}.{% endtrans %}
+    {%- endif %}
+    {%- if show_sphinx %}
+      {% trans sphinx_version=sphinx_version|e %}Created using <a href="http://sphinx-doc.org/">Sphinx</a> {{ sphinx_version }}.{% endtrans %}
+    {%- endif %}
+    </div>
+{%- endblock %}
+   </div>
+  </body>
+</html>

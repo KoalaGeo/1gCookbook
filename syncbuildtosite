@@ -1,0 +1,3 @@
+#!/bin/sh
+rsync -avz --delete --exclude-from=syncexcludes --delete-excluded use/build/html/ /vagrant/fileexchange/1gcookbook/use
+rsync -avz --delete --exclude-from=syncexcludes --delete-excluded service_provision/build/html/ /vagrant/fileexchange/1gcookbook/service_provision
